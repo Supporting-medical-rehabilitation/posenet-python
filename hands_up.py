@@ -6,6 +6,8 @@ import webcam_run
 import numpy as np
 import math
 
+from count_exercises import get_pose
+
 
 def isLine2(point1, point2, point3):
     x = [point1[0], point2[0]]
@@ -27,7 +29,7 @@ def is90(hip, shoulder, wrist):
     return abs(np.degrees(angle) - 90) < 20
 
 
-def main():
+def hands_up(which_side="left"):
     outputs = webcam_run.main('Hands up')
 
     count = 0
@@ -38,26 +40,23 @@ def main():
             for pose in range(len(pose_scores)):
                 if pose_scores[pose] == 0.:
                     break
-                left_shoulder = posenet.PART_NAMES.index("leftShoulder")
-                right_shoulder = posenet.PART_NAMES.index("rightShoulder")
-                left_elbow = posenet.PART_NAMES.index("leftElbow")
-                right_elbow = posenet.PART_NAMES.index("rightElbow")
-                left_wrist = posenet.PART_NAMES.index("leftWrist")
-                right_wrist = posenet.PART_NAMES.index("rightWrist")
-                left_hip = posenet.PART_NAMES.index("leftHip")
-                right_hip = posenet.PART_NAMES.index("rightHip")
+                left_shoulder = posenet.PART_NAMES.index(which_side+"Shoulder")
+                left_elbow = posenet.PART_NAMES.index(which_side+"Elbow")
+                left_wrist = posenet.PART_NAMES.index(which_side+"Wrist")
+                left_hip = posenet.PART_NAMES.index(which_side+"Hip")
 
                 if keypoint_scores[pose, left_shoulder] > 0.5 and keypoint_scores[pose, left_elbow] > 0.5 \
                         and keypoint_scores[pose, left_wrist] > 0.5 and keypoint_scores[pose, left_hip] > 0.5:
                     print("TEST")
-                    print(kp_coords[pose, left_shoulder, :])
-                    print(kp_coords[pose, left_elbow, :])
-                    print(kp_coords[pose, left_wrist, :])
-                    print(kp_coords[pose, left_hip, :])
+                    # print(kp_coords[pose, left_shoulder, :])
+                    # print(kp_coords[pose, left_elbow, :])
+                    # print(kp_coords[pose, left_wrist, :])
+                    # print(kp_coords[pose, left_hip, :])
                     if not startEx and abs(
                             kp_coords[pose, left_shoulder, :][1] - kp_coords[pose, left_elbow, :][1]) < 30 and abs(
                             kp_coords[pose, left_elbow, :][1] - kp_coords[pose, left_wrist, :][1]) < 30:
                         # if not startEx and abs(kp_coords[pose, left_hip, :][0]-kp_coords[pose,left_elbow, :][0]) <30 :
+                        print("start")
                         startEx = True
                         is90(kp_coords[pose, left_hip, :], kp_coords[pose, left_shoulder, :],
                              kp_coords[pose, left_wrist, :])
@@ -70,6 +69,8 @@ def main():
                                 kp_coords[pose, left_wrist, :]):
                             print("mamy kąt prosty")
                             count += 1
+                            # pose_scores, keypoint_scores, kp_coords = get_pose(
+                            #     output_stride, cap, str(count), sess, model_outputs)
                             startEx = False
 
         except StopIteration:
@@ -79,4 +80,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    hands_up()
