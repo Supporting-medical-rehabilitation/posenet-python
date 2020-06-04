@@ -6,7 +6,6 @@ import time
 import argparse
 import copy
 import numpy as np
-import tensorflow as tf
 import cv2
 
 from count_exercises import get_pose

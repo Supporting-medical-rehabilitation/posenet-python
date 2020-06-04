@@ -1,0 +1,9 @@
+IPython==7.15.0
+PyQt5==5.15.0
+pyQt5-sip==12.8.0
+ipython==7.15.0
+ipython-genutils==0.2.0
+tensorflow-estimator==2.0.0
+opencv-python==4.2.0.34
+opencv-contrib-python==4.2.0.34
+numpy==1.18.4
