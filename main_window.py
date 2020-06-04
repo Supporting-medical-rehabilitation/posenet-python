@@ -59,7 +59,6 @@ class MainWindow(QtWidgets.QMainWindow, UI_WINDOW):
     def go_to_exercise(self):
 
         amount = WINDOW.amountEdit.text()
-        print(amount)
         if self.cb.currentText() == "Squats":
             count_exercises.main(amount, 'squart')
         if self.cb.currentText() == "Lifting right hand":
