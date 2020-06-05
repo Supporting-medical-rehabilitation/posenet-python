@@ -36,9 +36,6 @@ PARSER.add_argument(
 ARGS = PARSER.parse_args()
 
 
-
-
-
 def count_exercises(amount, exercise):
     """ Wait 3 sec for person to stand in a right position, find initial position,
         count exercises.
@@ -57,8 +54,9 @@ def count_exercises(amount, exercise):
 
         amount = int(amount)
         count = 0
+
         if exercise == ExercisesType.SQUAT:
-            count_squats(amount,output_stride, cap, sess, model_outputs, count)
+            count_squats(amount, output_stride, cap, sess, model_outputs, count)
         elif exercise == ExercisesType.BENDS:
             forward_bends_knee(amount, output_stride, cap, sess, model_outputs)
         elif exercise == ExercisesType.HANDS_LEFT:
@@ -74,7 +72,7 @@ def count_exercises(amount, exercise):
 
         get_pose(output_stride, cap, "GREAT!", sess, model_outputs)
 
-
+        cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":

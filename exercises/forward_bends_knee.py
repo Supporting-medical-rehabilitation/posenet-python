@@ -9,7 +9,7 @@ def forward_bends_knee(amount, output_stride, cap, sess, model_outputs):
     print("[BENDS] Starting...")
     count = 0
     startEx = False
-    print("testff1")
+
     while count < amount:
         pose_scores, keypoint_scores, kp_coords = get_pose(
             output_stride, cap, str(count), sess, model_outputs)
@@ -36,13 +36,18 @@ def forward_bends_knee(amount, output_stride, cap, sess, model_outputs):
                     and keypoint_scores[pose, left_wrist] > 0.4 and keypoint_scores[pose, right_wrist] > 0.4 \
                     and startEx:
 
-                if abs(kp_coords[pose, left_dest, :][0] - kp_coords[pose, left_wrist, :][0]) < 50 and abs(
-                        kp_coords[pose, right_dest, :][0] - kp_coords[pose, right_wrist, :][0]) < 50:
+                if abs(kp_coords[pose, left_dest, :][0] - kp_coords[pose, left_wrist, :][0]) < 60 and abs(
+                        kp_coords[pose, right_dest, :][0] - kp_coords[pose, right_wrist, :][0]) < 60:
+                    get_pose(output_stride, cap, "Lower", sess, model_outputs)
+
+                if abs(kp_coords[pose, left_dest, :][0] - kp_coords[pose, left_wrist, :][0]) < 40 and abs(
+                        kp_coords[pose, right_dest, :][0] - kp_coords[pose, right_wrist, :][0]) < 40:
                     startEx = False
                     count += 1
                     print(f"End, number: {count}")
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
-            print(f"Bends:{count}")
+            print(f"Stopped before finishing series. Bends:{count}")
             break
+
     print(f"Bends:{count}")

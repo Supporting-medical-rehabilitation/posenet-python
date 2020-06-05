@@ -75,3 +75,4 @@ def count_squats(amount, output_stride, cap, sess, model_outputs, count):
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
+

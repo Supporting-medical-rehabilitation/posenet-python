@@ -23,7 +23,22 @@ def is90(hip, shoulder, wrist):
     cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
     angle = np.arccos(cosine_angle)
     print(np.degrees(angle))
+
     return abs(np.degrees(angle) - 55) < 10
+
+
+def isNotEnouugh90(hip, shoulder, wrist):
+    a = np.array(hip)
+    b = np.array(shoulder)
+    c = np.array(wrist)
+
+    ba = a - b
+    bc = c - b
+    cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+    angle = np.arccos(cosine_angle)
+    print(np.degrees(angle))
+
+    return abs(np.degrees(angle) - 35) < 10
 
 
 def lift_leg(amount, output_stride, cap, sess, model_outputs, which_side="left"):
@@ -69,9 +84,14 @@ def lift_leg(amount, output_stride, cap, sess, model_outputs, which_side="left")
                 #            [kp_coords[pose, left_wrist, :][1], kp_coords[pose, left_wrist, :][0]]):
                 if is90(kp_coords[pose, right_knee, :], kp_coords[pose, right_hip, :],
                         kp_coords[pose, left_knee, :]):
-
                     print("mamy kąt prosty")
                     count += 1
+                if isNotEnouugh90(kp_coords[pose, right_knee, :], kp_coords[pose, right_hip, :],
+                        kp_coords[pose, left_knee, :]):
+                    cound=True
+                    print("kat niezadowalajacy")
+
+
                     # pose_scores, keypoint_scores, kp_coords = get_pose(
                     #     output_stride, cap, str(count), sess, model_outputs)
                     startEx = False

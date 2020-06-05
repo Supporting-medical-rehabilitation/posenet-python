@@ -63,7 +63,7 @@ class MainWindow(QtWidgets.QMainWindow, UI_WINDOW):
         elif self.cb.currentText() == "Lifting left hand":
             count_exercises(amount, ExercisesType.HANDS_LEFT)
         elif self.cb.currentText() == "Lifting right leg":
-            count_exercises(amount, ExercisesType.LIFT_LEG_LEFT)
+            count_exercises(amount, ExercisesType.LIFT_LEG_RIGHT)
         elif self.cb.currentText() == "Lifting left leg":
             count_exercises(amount, ExercisesType.LIFT_LEG_LEFT)
         elif self.cb.currentText() == "Bends over":
