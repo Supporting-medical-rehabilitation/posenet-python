@@ -56,6 +56,7 @@ def count_exercises(amount, exercise):
         cap.set(4, ARGS.cam_height)
 
         amount = int(amount)
+
         if exercise == ExercisesType.SQUAT:
             count_squats(amount, output_stride, cap, sess, model_outputs)
         elif exercise == ExercisesType.BENDS:
@@ -76,3 +77,4 @@ def count_exercises(amount, exercise):
             count_bends(amount, output_stride, cap, sess, model_outputs, "right")
 
         get_pose(output_stride, cap, "GREAT!", sess, model_outputs)
+        cv2.destroyAllWindows()

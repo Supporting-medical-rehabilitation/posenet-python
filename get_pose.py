@@ -1,27 +1,13 @@
-import time
-import argparse
-from enum import Enum
-
-import tensorflow as tf
 import cv2
 
 import posenet
 
-PARSER = argparse.ArgumentParser()
-PARSER.add_argument('--model', type=int, default=101)
-PARSER.add_argument('--cam_id', type=int, default=0)
-PARSER.add_argument('--cam_width', type=int, default=1280)
-PARSER.add_argument('--cam_height', type=int, default=720)
-PARSER.add_argument('--scale_factor', type=float, default=0.7125)
-PARSER.add_argument(
-    '--file', type=str, default=None, help="Optionally use a video file instead of a live camera")
-ARGS = PARSER.parse_args()
 
-def get_pose(output_stride, cap, legend, sess, model_outputs):
-    """Gets pose's coordinates, draws lines ans prints text."""
+def get_pose(output_stride, cap, legend, sess, model_outputs, counter=True):
+    """Gets pose's coordinates, draws lines and prints text."""
 
     input_image, display_image, output_scale = posenet.read_cap(
-        cap, scale_factor=ARGS.scale_factor, output_stride=output_stride)
+        cap, scale_factor=0.7125, output_stride=output_stride)
 
     heatmaps_result, offsets_result, displacement_fwd_result, displacement_bwd_result = sess.run(
         model_outputs,
@@ -43,7 +29,16 @@ def get_pose(output_stride, cap, legend, sess, model_outputs):
         display_image, pose_scores, keypoint_scores, keypoint_coords,
         min_pose_score=0.15, min_part_score=0.1)
     if legend:
+        if counter:
+
+            font_scale = 6
+            org = (300,300)
+            thickness = 15
+        else:
+            font_scale = 2
+            org = (50, 100)
+            thickness = 4
         cv2.putText(
-            overlay_image, legend, (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 6, (0, 0, 255), 20)
+            overlay_image, legend,org , cv2.FONT_HERSHEY_SIMPLEX, font_scale, (0, 0, 255),thickness)
     cv2.imshow('posenet', overlay_image)
-    return (pose_scores, keypoint_scores, keypoint_coords)
+    return pose_scores, keypoint_scores, keypoint_coords

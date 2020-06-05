@@ -10,15 +10,21 @@ def check_eyes(keypoint_scores, pose, eye):
 
 
 def head_ex(amount, output_stride, cap, sess, model_outputs):
-
-
     count_left = 0
     count_right = 0
     startEx = False
     print("[HEAD] START")
-    while count_left < amount and count_right< amount:
+    while count_left < amount or count_right < amount:
+        count_title = ""
+        if count_right > count_left:
+            count_title = "Turning more left, "
+        elif count_left > count_right:
+            count_title = "Turning more right, "
+
+        count_title += "L: " + str(count_left) + ", R: " + str(count_right)
         pose_scores, keypoint_scores, kp_coords = get_pose(
-            output_stride, cap, str(count_left), sess, model_outputs)
+            output_stride, cap, count_title, sess, model_outputs, False)
+
         for pose in range(len(pose_scores)):
             if pose_scores[pose] == 0.:
                 break
@@ -26,21 +32,19 @@ def head_ex(amount, output_stride, cap, sess, model_outputs):
             right_ear = posenet.PART_NAMES.index("rightEar")
 
             if keypoint_scores[pose, left_ear] > 0.5 and keypoint_scores[pose, right_ear] > 0.5:
-                print("GO")
+                print("START")
                 startEx = True
-            if keypoint_scores[pose, left_ear] < 0.5 < keypoint_scores[pose, right_ear] and startEx:
-                print("Turning left")
+            if keypoint_scores[pose, left_ear] < 0.2 < keypoint_scores[pose, right_ear] and startEx:
+                print("Turned left")
                 count_left += 1
                 startEx = False
-            if keypoint_scores[pose, right_ear] < 0.5 < keypoint_scores[pose, left_ear] and startEx:
-                print("Turning right")
+            if keypoint_scores[pose, right_ear] < 0.2 < keypoint_scores[pose, left_ear] and startEx:
+                print("Turned right")
                 count_right += 1
                 startEx = False
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
-            print(f"Turn right: {count_right} Turn left: {count_left} ")
+            print(f"Stopped before finishing series. Turn right: {count_right} Turn left: {count_left} ")
             break
 
     print(f"Turn right: {count_right} Turn left: {count_left} ")
-
-
