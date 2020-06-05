@@ -1,12 +1,28 @@
 """Programme counts different exercises"""
 import time
 import argparse
-import copy
-import numpy as np
+from enum import Enum
+
 import tensorflow as tf
 import cv2
 
 import posenet
+from exercises.forward_bends_knee import forward_bends_knee
+from exercises.squats import count_squats
+from exercises.hands_up import hands_up
+from exercises.head_ex import head_ex
+from exercises.lift_leg import lift_leg
+from get_pose import get_pose
+
+
+class ExercisesType(Enum):
+    HEAD = 1
+    HANDS_LEFT = 2
+    HANDS_RIGHT = 3
+    BENDS = 4
+    LIFT_LEG_LEFT = 5
+    LIFT_LEG_RIGHT = 6
+    SQUAT = 7
 
 
 PARSER = argparse.ArgumentParser()
@@ -20,63 +36,10 @@ PARSER.add_argument(
 ARGS = PARSER.parse_args()
 
 
-def find_initial(output_stride, cap, sess, model_outputs):
-    """While person stays still gets its coordinates and return average."""
-
-    glob_count = 0
-    while glob_count < 40:
-        count = 1
-        pose_scores_start, _, kp_coords_start = get_pose(
-            output_stride, cap, "Stay still", sess, model_outputs)
-        for pose, kp_coord_start in enumerate(kp_coords_start):
-            if pose_scores_start[pose] != 0.:
-                glob_count += 1
-                try:
-                    kp_coords_start_av = kp_coords_start_av + kp_coord_start
-                except NameError:
-                    kp_coords_start_av = copy.deepcopy(kp_coord_start)
-                else:
-                    count += 1
-        if count != 1:
-            kp_coords_start_av = np.divide(kp_coords_start_av, count)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-    return kp_coords_start_av
 
 
-def get_pose(output_stride, cap, legend, sess, model_outputs):
-    """Gets pose's coordinates, draws lines ans prints text."""
 
-    input_image, display_image, output_scale = posenet.read_cap(
-        cap, scale_factor=ARGS.scale_factor, output_stride=output_stride)
-
-    heatmaps_result, offsets_result, displacement_fwd_result, displacement_bwd_result = sess.run(
-        model_outputs,
-        feed_dict={'image:0': input_image}
-    )
-
-    pose_scores, keypoint_scores, keypoint_coords = posenet.decode_multi.decode_multiple_poses(
-        heatmaps_result.squeeze(axis=0),
-        offsets_result.squeeze(axis=0),
-        displacement_fwd_result.squeeze(axis=0),
-        displacement_bwd_result.squeeze(axis=0),
-        output_stride=output_stride,
-        max_pose_detections=10,
-        min_pose_score=0.15)
-
-    keypoint_coords *= output_scale
-
-    overlay_image = posenet.draw_skel_and_kp(
-        display_image, pose_scores, keypoint_scores, keypoint_coords,
-        min_pose_score=0.15, min_part_score=0.1)
-    if legend:
-        cv2.putText(
-            overlay_image, legend, (300, 300), cv2.FONT_HERSHEY_SIMPLEX, 6, (0, 0, 255), 20)
-    cv2.imshow('posenet', overlay_image)
-    return (pose_scores, keypoint_scores, keypoint_coords)
-
-
-def main(amount, exercise):
+def count_exercises(amount, exercise):
     """ Wait 3 sec for person to stand in a right position, find initial position,
         count exercises.
     """
@@ -92,62 +55,27 @@ def main(amount, exercise):
         cap.set(3, ARGS.cam_width)
         cap.set(4, ARGS.cam_height)
 
-        kp_coords_start_av = find_initial(output_stride, cap, sess, model_outputs)
-        compare_val = abs(kp_coords_start_av[0, 0] - kp_coords_start_av[-1, 0])*0.04
-
-        count = 0
-        down = False
-        going_down = 1
         amount = int(amount)
-        if exercise == 'squart':
-            while count < amount:
-                count, down, going_down = count_squats(
-                    output_stride, cap, sess, model_outputs,
-                    count, kp_coords_start_av, compare_val, down, going_down)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
-        elif exercise == 'arms':
-            pass # TO DO count arms
+        count = 0
+        if exercise == ExercisesType.SQUAT:
+            count_squats(amount,output_stride, cap, sess, model_outputs, count)
+        elif exercise == ExercisesType.BENDS:
+            forward_bends_knee(amount, output_stride, cap, sess, model_outputs)
+        elif exercise == ExercisesType.HANDS_LEFT:
+            hands_up(amount, output_stride, cap, sess, model_outputs, "left")
+        elif exercise == ExercisesType.HANDS_RIGHT:
+            hands_up(amount, output_stride, cap, sess, model_outputs, "right")
+        elif exercise == ExercisesType.HEAD:
+            head_ex(amount, output_stride, cap, sess, model_outputs)
+        elif exercise == ExercisesType.LIFT_LEG_LEFT:
+            lift_leg(amount, output_stride, cap, sess, model_outputs, "left")
+        elif exercise == ExercisesType.LIFT_LEG_RIGHT:
+            lift_leg(amount, output_stride, cap, sess, model_outputs, "right")
+
         get_pose(output_stride, cap, "GREAT!", sess, model_outputs)
 
 
-def count_squats(output_stride, cap, sess, model_outputs,
-                 count, kp_coords_start_av, compare_val, down, going_down):
-    """Gets pose's coordinates, checks if difference in knees height is big enough,
-    if yes - adds squat.
-    """
 
-    if going_down == 0:
-        label = str(count)
-        going_down = 1
-    elif going_down == 1:
-        label = "Down"
-    elif going_down == -1:
-        label = "Up"
 
-    pose_scores, keypoint_scores, kp_coords = get_pose(
-        output_stride, cap, label, sess, model_outputs)
-    for pose in range(len(pose_scores)):
-        if pose_scores[pose] == 0.:
-            break
-        # for ki, (s, c) in enumerate(zip(keypoint_scores[pose, :], kp_coords[pose, :, :])):
-        #     print('Keypoint %s, score = %f, coord = %s' % (posenet.PART_NAMES[ki], s, c))
-        l_knee_in = posenet.PART_NAMES.index("leftKnee")
-        r_knee_in = posenet.PART_NAMES.index("rightKnee")
-        if keypoint_scores[pose, l_knee_in] > 0.7:
-            diff = kp_coords[pose, l_knee_in, :] - kp_coords_start_av[l_knee_in, :]
-        elif keypoint_scores[pose, r_knee_in] > 0.7:
-            diff = kp_coords[pose, r_knee_in, :] - kp_coords_start_av[r_knee_in, :]
-        else:
-            break
-
-        if diff[0] > compare_val and not down:
-            down = True
-            going_down = -1
-        elif diff[0] < compare_val and diff[0] > 0 and down:
-            down = False
-            count += 1
-
-        if going_down == -1 and diff[0] < compare_val*0.1:
-            going_down = 0
-    return (count, down, going_down)
+if __name__ == "__main__":
+    count_exercises(2, ExercisesType.BENDS)

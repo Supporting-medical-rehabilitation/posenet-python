@@ -4,11 +4,7 @@ import sys
 from IPython.external.qt_for_kernel import QtGui
 from PyQt5 import QtWidgets, uic
 
-import count_exercises
-from forward_bends_knee import forward_bends_knee
-from hands_up import hands_up
-from head_ex import head_ex
-from lift_leg import lift_leg
+from count_exercises import count_exercises, ExercisesType
 
 QT_FILE = "gui/med_rehab.ui"
 UI_WINDOW, _ = uic.loadUiType(QT_FILE)
@@ -61,19 +57,19 @@ class MainWindow(QtWidgets.QMainWindow, UI_WINDOW):
 
         amount = WINDOW.amountEdit.text()
         if self.cb.currentText() == "Squats":
-            count_exercises.main(amount, 'squart')
+            count_exercises(amount, ExercisesType.SQUAT)
         elif self.cb.currentText() == "Lifting right hand":
-            hands_up("right")
+            count_exercises(amount, ExercisesType.HANDS_RIGHT)
         elif self.cb.currentText() == "Lifting left hand":
-            hands_up("left")
+            count_exercises(amount, ExercisesType.HANDS_LEFT)
         elif self.cb.currentText() == "Lifting right leg":
-            lift_leg("right")
+            count_exercises(amount, ExercisesType.LIFT_LEG_LEFT)
         elif self.cb.currentText() == "Lifting left leg":
-            lift_leg("left")
+            count_exercises(amount, ExercisesType.LIFT_LEG_LEFT)
         elif self.cb.currentText() == "Bends over":
-            forward_bends_knee()
+            count_exercises(amount, ExercisesType.BENDS)
         elif self.cb.currentText() == "Head's side bends":
-            head_ex()
+            count_exercises(amount, ExercisesType.HEAD)
 
 
 if __name__ == '__main__':

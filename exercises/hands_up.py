@@ -1,12 +1,8 @@
 """ Program counts hands up"""
-import time
-import copy
 import posenet
-import webcam_run
 import numpy as np
-import math
-
-from count_exercises import get_pose
+import cv2
+from get_pose import get_pose
 
 
 def isLine2(point1, point2, point3):
@@ -29,14 +25,14 @@ def is90(hip, shoulder, wrist):
     return abs(np.degrees(angle) - 90) < 20
 
 
-def hands_up(which_side="left"):
-    outputs = webcam_run.main('Hands up')
+def hands_up(amount, output_stride, cap, sess, model_outputs, which_side="left"):
 
     count = 0
     startEx = False
-    while True:
+    while count < amount:
         try:
-            pose_scores, keypoint_scores, kp_coords = next(outputs)
+            pose_scores, keypoint_scores, kp_coords = get_pose(
+            output_stride, cap, str(count), sess, model_outputs)
             for pose in range(len(pose_scores)):
                 if pose_scores[pose] == 0.:
                     break
@@ -72,12 +68,10 @@ def hands_up(which_side="left"):
                             # pose_scores, keypoint_scores, kp_coords = get_pose(
                             #     output_stride, cap, str(count), sess, model_outputs)
                             startEx = False
-
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                print("Hands up: ", count)
+                break
         except StopIteration:
             break
 
     print("Hands up: ", count)
-
-
-if __name__ == "__main__":
-    hands_up()
