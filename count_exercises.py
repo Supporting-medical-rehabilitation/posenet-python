@@ -12,6 +12,7 @@ from exercises.squats import count_squats
 from exercises.hands_up import hands_up
 from exercises.head_ex import head_ex
 from exercises.lift_leg import lift_leg
+from exercises.elbow_knee import count_bends
 from get_pose import get_pose
 
 
@@ -23,6 +24,8 @@ class ExercisesType(Enum):
     LIFT_LEG_LEFT = 5
     LIFT_LEG_RIGHT = 6
     SQUAT = 7
+    BEND_LEFT_KNEE = 8
+    BEND_RIGHT_KNEE = 9
 
 
 PARSER = argparse.ArgumentParser()
@@ -34,9 +37,6 @@ PARSER.add_argument('--scale_factor', type=float, default=0.7125)
 PARSER.add_argument(
     '--file', type=str, default=None, help="Optionally use a video file instead of a live camera")
 ARGS = PARSER.parse_args()
-
-
-
 
 
 def count_exercises(amount, exercise):
@@ -56,9 +56,8 @@ def count_exercises(amount, exercise):
         cap.set(4, ARGS.cam_height)
 
         amount = int(amount)
-        count = 0
         if exercise == ExercisesType.SQUAT:
-            count_squats(amount,output_stride, cap, sess, model_outputs, count)
+            count_squats(amount, output_stride, cap, sess, model_outputs)
         elif exercise == ExercisesType.BENDS:
             forward_bends_knee(amount, output_stride, cap, sess, model_outputs)
         elif exercise == ExercisesType.HANDS_LEFT:
@@ -71,11 +70,9 @@ def count_exercises(amount, exercise):
             lift_leg(amount, output_stride, cap, sess, model_outputs, "left")
         elif exercise == ExercisesType.LIFT_LEG_RIGHT:
             lift_leg(amount, output_stride, cap, sess, model_outputs, "right")
+        elif exercise == ExercisesType.BEND_LEFT_KNEE:
+            count_bends(amount, output_stride, cap, sess, model_outputs, "left")
+        elif exercise == ExercisesType.BEND_RIGHT_KNEE:
+            count_bends(amount, output_stride, cap, sess, model_outputs, "right")
 
         get_pose(output_stride, cap, "GREAT!", sess, model_outputs)
-
-
-
-
-if __name__ == "__main__":
-    count_exercises(2, ExercisesType.BENDS)

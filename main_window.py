@@ -33,8 +33,10 @@ class MainWindow(QtWidgets.QMainWindow, UI_WINDOW):
         btn.resize(btn.minimumSizeHint())
         btn.move(400, 400)
         self.cb = QtGui.QComboBox(self)
-        self.cb.addItems(["Squats", "Lifting right hand", "Lifting left hand", "Lifting left leg", "Lifting right leg",
-                          "Bends over", "Head's side bends"])
+        self.cb.addItems([
+            "Squats", "Lifting right hand", "Lifting left hand", "Lifting left leg",
+            "Lifting right leg", "Bends over", "Head's side bends", "Right elbow to left knee",
+            "Left elbow to right knee"])
         self.cb.resize(self.cb.minimumSizeHint())
         self.cb.move(110, 250)
 
@@ -44,11 +46,10 @@ class MainWindow(QtWidgets.QMainWindow, UI_WINDOW):
         pass
 
     def close_application(self):
-        choice = QtGui.QMessageBox.question(self, 'Confirm exit',
-                                            "Are you sure you want to exit?",
-                                            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        choice = QtGui.QMessageBox.question(
+            self, 'Confirm exit', "Are you sure you want to exit?",
+            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if choice == QtGui.QMessageBox.Yes:
-            print("Closing rehab app")
             sys.exit()
         else:
             pass
@@ -70,6 +71,10 @@ class MainWindow(QtWidgets.QMainWindow, UI_WINDOW):
             count_exercises(amount, ExercisesType.BENDS)
         elif self.cb.currentText() == "Head's side bends":
             count_exercises(amount, ExercisesType.HEAD)
+        elif self.cb.currentText() == "Right elbow to left knee":
+            count_exercises(amount, ExercisesType.BEND_LEFT_KNEE)
+        elif self.cb.currentText() == "Left elbow to right knee":
+            count_exercises(amount, ExercisesType.BEND_RIGHT_KNEE)
 
 
 if __name__ == '__main__':
