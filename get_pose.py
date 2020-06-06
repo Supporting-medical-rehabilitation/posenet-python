@@ -9,11 +9,10 @@ def set_style(style):
     thickness = 15
     color = (0, 0, 255)
     if style == "count_info":
-        font_scale = 2
-        org = (50, 100)
-        thickness = 4
+        font_scale = 3
+        org = (80, 100)
+        thickness = 6
     elif style == "warning":
-        org = (200, 200)
         thickness = 10
         font_scale = 2
         color = (139, 0, 0)

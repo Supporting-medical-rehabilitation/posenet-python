@@ -1,3 +1,4 @@
+""" Program counts bends over to knee"""
 import posenet
 import cv2
 
@@ -12,7 +13,7 @@ def forward_bends_knee(amount, output_stride, cap, sess, model_outputs):
 
     while count < amount:
         pose_scores, keypoint_scores, kp_coords = get_pose(
-            output_stride, cap, str(count), sess, model_outputs)
+            output_stride, cap, str(count), sess, model_outputs, "count_info")
         for pose in range(len(pose_scores)):
             if pose_scores[pose] == 0.:
                 break
