@@ -1,13 +1,8 @@
+""" Program counts turning head right and left """
 import posenet
 import cv2
 
 from get_pose import get_pose
-
-
-def check_eyes(keypoint_scores, pose, eye):
-    part_eye = posenet.PART_NAMES.index(eye)
-    print(keypoint_scores[pose, part_eye])
-    return keypoint_scores[pose, part_eye] < 0.4
 
 
 def head_ex(amount, output_stride, cap, sess, model_outputs):
@@ -18,13 +13,13 @@ def head_ex(amount, output_stride, cap, sess, model_outputs):
     while count_left < amount or count_right < amount:
         count_title = ""
         if count_right > count_left:
-            count_title = "Turning more left, "
+            count_title = "Turn left, "
         elif count_left > count_right:
-            count_title = "Turning more right, "
+            count_title = "Turn right, "
 
         count_title += "L: " + str(count_left) + ", R: " + str(count_right)
         pose_scores, keypoint_scores, kp_coords = get_pose(
-            output_stride, cap, count_title, sess, model_outputs, False)
+            output_stride, cap, count_title, sess, model_outputs, "count_info")
 
         for pose in range(len(pose_scores)):
             if pose_scores[pose] == 0.:

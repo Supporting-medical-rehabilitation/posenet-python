@@ -36,13 +36,15 @@ def forward_bends_knee(amount, output_stride, cap, sess, model_outputs):
                     and keypoint_scores[pose, left_wrist] > 0.4 and keypoint_scores[pose, right_wrist] > 0.4 \
                     and startEx:
 
-
-
                 if abs(kp_coords[pose, left_dest, :][0] - kp_coords[pose, left_wrist, :][0]) < 60 and abs(
                         kp_coords[pose, right_dest, :][0] - kp_coords[pose, right_wrist, :][0]) < 60:
                     startEx = False
                     count += 1
-                    print(f"End, number: {count}")
+                    print("Done")
+                elif abs(kp_coords[pose, left_dest, :][0] - kp_coords[pose, left_wrist, :][0]) < 100 and abs(
+                        kp_coords[pose, right_dest, :][0] - kp_coords[pose, right_wrist, :][0]) < 100:
+                    pose_scores, keypoint_scores, kp_coords = get_pose(
+                        output_stride, cap, "Go lower", sess, model_outputs, "warning")
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             print(f"Stopped before finishing series. Bends:{count}")
