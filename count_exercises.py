@@ -55,8 +55,6 @@ def count_exercises(amount, exercise):
         cap.set(3, ARGS.cam_width)
         cap.set(4, ARGS.cam_height)
 
-        amount = int(amount)
-
         if exercise == ExercisesType.SQUAT:
             count_squats(amount, output_stride, cap, sess, model_outputs)
         elif exercise == ExercisesType.BENDS:

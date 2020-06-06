@@ -56,25 +56,33 @@ class MainWindow(QtWidgets.QMainWindow, UI_WINDOW):
 
     def go_to_exercise(self):
 
-        amount = WINDOW.amountEdit.text()
-        if self.cb.currentText() == "Squats":
-            count_exercises(amount, ExercisesType.SQUAT)
-        elif self.cb.currentText() == "Lifting right hand":
-            count_exercises(amount, ExercisesType.HANDS_RIGHT)
-        elif self.cb.currentText() == "Lifting left hand":
-            count_exercises(amount, ExercisesType.HANDS_LEFT)
-        elif self.cb.currentText() == "Lifting right leg":
-            count_exercises(amount, ExercisesType.LIFT_LEG_RIGHT)
-        elif self.cb.currentText() == "Lifting left leg":
-            count_exercises(amount, ExercisesType.LIFT_LEG_LEFT)
-        elif self.cb.currentText() == "Bends over":
-            count_exercises(amount, ExercisesType.BENDS)
-        elif self.cb.currentText() == "Head's side bends":
-            count_exercises(amount, ExercisesType.HEAD)
-        elif self.cb.currentText() == "Right elbow to left knee":
-            count_exercises(amount, ExercisesType.BEND_LEFT_KNEE)
-        elif self.cb.currentText() == "Left elbow to right knee":
-            count_exercises(amount, ExercisesType.BEND_RIGHT_KNEE)
+        try:
+            amount = int(WINDOW.amountEdit.text())
+            if amount < 1:
+                raise ValueError
+        except ValueError:
+            error_dialog = QtWidgets.QErrorMessage()
+            error_dialog.showMessage('Amount should be digit ana more than 0')
+            error_dialog.exec_()
+        else:
+            if self.cb.currentText() == "Squats":
+                count_exercises(amount, ExercisesType.SQUAT)
+            elif self.cb.currentText() == "Lifting right hand":
+                count_exercises(amount, ExercisesType.HANDS_RIGHT)
+            elif self.cb.currentText() == "Lifting left hand":
+                count_exercises(amount, ExercisesType.HANDS_LEFT)
+            elif self.cb.currentText() == "Lifting right leg":
+                count_exercises(amount, ExercisesType.LIFT_LEG_RIGHT)
+            elif self.cb.currentText() == "Lifting left leg":
+                count_exercises(amount, ExercisesType.LIFT_LEG_LEFT)
+            elif self.cb.currentText() == "Bends over":
+                count_exercises(amount, ExercisesType.BENDS)
+            elif self.cb.currentText() == "Head's side bends":
+                count_exercises(amount, ExercisesType.HEAD)
+            elif self.cb.currentText() == "Right elbow to left knee":
+                count_exercises(amount, ExercisesType.BEND_LEFT_KNEE)
+            elif self.cb.currentText() == "Left elbow to right knee":
+                count_exercises(amount, ExercisesType.BEND_RIGHT_KNEE)
 
 
 if __name__ == '__main__':
