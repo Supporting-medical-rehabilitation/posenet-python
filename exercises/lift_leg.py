@@ -86,10 +86,10 @@ def lift_leg(amount, output_stride, cap, sess, model_outputs, which_side="left")
                         kp_coords[pose, left_knee, :]):
                     print("mamy kąt prosty")
                     count += 1
-                if isNotEnouugh90(kp_coords[pose, right_knee, :], kp_coords[pose, right_hip, :],
-                        kp_coords[pose, left_knee, :]):
-                    cound=True
-                    print("kat niezadowalajacy")
+                # if isNotEnouugh90(kp_coords[pose, right_knee, :], kp_coords[pose, right_hip, :],
+                #         kp_coords[pose, left_knee, :]):
+                #     cound=True
+                #     print("kat niezadowalajacy")
 
 
                     # pose_scores, keypoint_scores, kp_coords = get_pose(

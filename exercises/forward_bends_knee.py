@@ -36,12 +36,10 @@ def forward_bends_knee(amount, output_stride, cap, sess, model_outputs):
                     and keypoint_scores[pose, left_wrist] > 0.4 and keypoint_scores[pose, right_wrist] > 0.4 \
                     and startEx:
 
+
+
                 if abs(kp_coords[pose, left_dest, :][0] - kp_coords[pose, left_wrist, :][0]) < 60 and abs(
                         kp_coords[pose, right_dest, :][0] - kp_coords[pose, right_wrist, :][0]) < 60:
-                    get_pose(output_stride, cap, "Lower", sess, model_outputs)
-
-                if abs(kp_coords[pose, left_dest, :][0] - kp_coords[pose, left_wrist, :][0]) < 40 and abs(
-                        kp_coords[pose, right_dest, :][0] - kp_coords[pose, right_wrist, :][0]) < 40:
                     startEx = False
                     count += 1
                     print(f"End, number: {count}")
