@@ -4,11 +4,7 @@ import sys
 from IPython.external.qt_for_kernel import QtGui
 from PyQt5 import QtWidgets, uic
 
-import count_exercises
-from forward_bends_knee import forward_bends_knee
-from hands_up import hands_up
-from head_ex import head_ex
-from lift_leg import lift_leg
+from count_exercises import count_exercises, ExercisesType
 
 QT_FILE = "gui/med_rehab.ui"
 UI_WINDOW, _ = uic.loadUiType(QT_FILE)
@@ -37,8 +33,10 @@ class MainWindow(QtWidgets.QMainWindow, UI_WINDOW):
         btn.resize(btn.minimumSizeHint())
         btn.move(400, 400)
         self.cb = QtGui.QComboBox(self)
-        self.cb.addItems(["Squats", "Lifting right hand", "Lifting left hand", "Lifting left leg", "Lifting right leg",
-                          "Bends over", "Head's side bends"])
+        self.cb.addItems([
+            "Squats", "Lifting right hand", "Lifting left hand", "Lifting left leg",
+            "Lifting right leg", "Bends over", "Head's side bends", "Right elbow to left knee",
+            "Left elbow to right knee"])
         self.cb.resize(self.cb.minimumSizeHint())
         self.cb.move(110, 250)
 
@@ -48,33 +46,43 @@ class MainWindow(QtWidgets.QMainWindow, UI_WINDOW):
         pass
 
     def close_application(self):
-        choice = QtGui.QMessageBox.question(self, 'Confirm exit',
-                                            "Are you sure you want to exit?",
-                                            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        choice = QtGui.QMessageBox.question(
+            self, 'Confirm exit', "Are you sure you want to exit?",
+            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if choice == QtGui.QMessageBox.Yes:
-            print("Closing rehab app")
             sys.exit()
         else:
             pass
 
     def go_to_exercise(self):
 
-        amount = WINDOW.amountEdit.text()
-        print(amount)
-        if self.cb.currentText() == "Squats":
-            count_exercises.main(amount, 'squart')
-        elif self.cb.currentText() == "Lifting right hand":
-            hands_up("right")
-        elif self.cb.currentText() == "Lifting left hand":
-            hands_up("left")
-        elif self.cb.currentText() == "Lifting right leg":
-            lift_leg("right")
-        elif self.cb.currentText() == "Lifting left leg":
-            lift_leg("left")
-        elif self.cb.currentText() == "Bends over":
-            forward_bends_knee()
-        elif self.cb.currentText() == "Head's side bends":
-            head_ex()
+        try:
+            amount = int(WINDOW.amountEdit.text())
+            if amount < 1:
+                raise ValueError
+        except ValueError:
+            error_dialog = QtWidgets.QErrorMessage()
+            error_dialog.showMessage('Amount should be digit ana more than 0')
+            error_dialog.exec_()
+        else:
+            if self.cb.currentText() == "Squats":
+                count_exercises(amount, ExercisesType.SQUAT)
+            elif self.cb.currentText() == "Lifting right hand":
+                count_exercises(amount, ExercisesType.HANDS_RIGHT)
+            elif self.cb.currentText() == "Lifting left hand":
+                count_exercises(amount, ExercisesType.HANDS_LEFT)
+            elif self.cb.currentText() == "Lifting right leg":
+                count_exercises(amount, ExercisesType.LIFT_LEG_RIGHT)
+            elif self.cb.currentText() == "Lifting left leg":
+                count_exercises(amount, ExercisesType.LIFT_LEG_LEFT)
+            elif self.cb.currentText() == "Bends over":
+                count_exercises(amount, ExercisesType.BENDS)
+            elif self.cb.currentText() == "Head's side bends":
+                count_exercises(amount, ExercisesType.HEAD)
+            elif self.cb.currentText() == "Right elbow to left knee":
+                count_exercises(amount, ExercisesType.BEND_LEFT_KNEE)
+            elif self.cb.currentText() == "Left elbow to right knee":
+                count_exercises(amount, ExercisesType.BEND_RIGHT_KNEE)
 
 
 if __name__ == '__main__':
