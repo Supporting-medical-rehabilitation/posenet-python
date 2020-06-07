@@ -62,7 +62,7 @@ class MainWindow(QtWidgets.QMainWindow, UI_WINDOW):
                 raise ValueError
         except ValueError:
             error_dialog = QtWidgets.QErrorMessage()
-            error_dialog.showMessage('Amount should be digit ana more than 0')
+            error_dialog.showMessage('Amount should be a digit and more than 0')
             error_dialog.exec_()
         else:
             if self.cb.currentText() == "Squats":
