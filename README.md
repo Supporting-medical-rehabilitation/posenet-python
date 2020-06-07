@@ -1,18 +1,21 @@
 ## Medical Rehabilitation support 
 
-This repository contains an application for supporting medical rehabilitation using
+This repository contains an desktop application for supporting medical rehabilitation using
 implementation of PoseNet in Python.
-  
+
 
 ### Install and run
 
 A suitable Python 3.x environment is requried. 
 ```
-python -m pip install --upgrade pip 
-pip install https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-1.8.0-py3-none-any.whl
 pip install -r requirements.txt
 python main_window.py
 ```
+### Usage 
+The user can choose one exercise from the list of available exercises, enter the number of repetitions and start performing the exercise. The application monitors the user's pose by the webcam and counts the number of repetitions performed, it also instructs the user with simple commands to do the exercise correctly.
+It counts the number of examples that have not been correctly completed, but does not count them in the final results.
+The appication allows adding new exercises in a simple way. Implementation of all exercises are contained in *exercises* folder.
+  
 
 ### Credits
 
