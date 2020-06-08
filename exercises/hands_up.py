@@ -9,7 +9,6 @@ def is_straight_line(point1, point2, point3):
     x = [point1[0], point2[0]]
     y = [point1[1], point2[1]]
     coefficients = np.polyfit(x, y, 1)
-    print(abs((point3[0] * coefficients[0] + coefficients[1]) - point3[1]))
     return abs((point3[0] * coefficients[0] + coefficients[1]) - point3[1]) < 60
 
 
